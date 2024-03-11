@@ -1,0 +1,7 @@
+django
+django-rest-framework
+django-extensions
+celery
+django-celery-results
+psycopg2-binary
+redis

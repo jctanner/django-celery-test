@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    #working_dir: /code/django_celery_test
+    command: /code/bin/entrypoint.sh
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+      #- celery
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@localhost
+      - DJANGO_SUPERUSER_PASSWORD=admin
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: django_celery_test
+      POSTGRES_USER: django
+      POSTGRES_PASSWORD: django
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    working_dir: /code/django_celery_test
+    command: >
+      celery -A django_celery_test worker --loglevel=info
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
